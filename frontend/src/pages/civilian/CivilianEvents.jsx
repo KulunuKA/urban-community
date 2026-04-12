@@ -92,6 +92,7 @@ export default function CivilianEvents() {
                 membershipStatus={currentStatus}
                 isRequesting={isRequesting}
                 onSendRequest={onSendRequest}
+                type="civilian"
               />
             );
           })}

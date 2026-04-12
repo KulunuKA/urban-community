@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 const Event = require("../events/eventModel");
 const Member = require("./memberModel");
 const Citizen = require("../citizen/citizenModel");
-const { MEMBER_STATUS } = require("../../config/constant");
+const { MEMBER_STATUS, NOTIFICATION_TYPES } = require("../../config/constant");
 const Organization = require("../organization/organizationModel");
+const { createNotification } = require("../Notifications/notificationController");
 
 const sendRequest = async (req, res, next) => {
   try {
@@ -16,6 +17,9 @@ const sendRequest = async (req, res, next) => {
         message: "Invalid event ID",
       });
     }
+
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const eventObjectId = new mongoose.Types.ObjectId(eventId);
 
     //step 1: is valid user
     const user = await Citizen.findById(userId);
@@ -39,8 +43,8 @@ const sendRequest = async (req, res, next) => {
     const member = await Member.aggregate([
       {
         $match: {
-          userId: userId,
-          eventId: eventId,
+          userId: userObjectId,
+          eventId: eventObjectId,
           status: MEMBER_STATUS.ACCEPTED,
         },
       },
@@ -57,8 +61,8 @@ const sendRequest = async (req, res, next) => {
     const pendingRequest = await Member.aggregate([
       {
         $match: {
-          userId: userId,
-          eventId: eventId,
+          userId: userObjectId,
+          eventId: eventObjectId,
           status: MEMBER_STATUS.PENDING,
         },
       },
@@ -77,6 +81,14 @@ const sendRequest = async (req, res, next) => {
       eventId: eventId,
       status: MEMBER_STATUS.PENDING,
     });
+
+    await createNotification(
+      event.orgId,
+      NOTIFICATION_TYPES.EVENT_REQUEST,
+      "New Event Request",
+      `New request for ${event.title} from ${user.name}`,
+      event._id,
+    );
 
     return res.status(201).json({
       success: true,
@@ -164,6 +176,7 @@ const responseRequest = async (req, res, next) => {
   try {
     const requestId = req.params.requestId;
     const { status } = req.validatedBody ?? req.body;
+    const organizationId = req.user.id;
 
     if (!requestId || !mongoose.isValidObjectId(requestId)) {
       return res.status(400).json({
@@ -173,24 +186,46 @@ const responseRequest = async (req, res, next) => {
     }
 
     //step 1: is valid request
-    const request = await Member.aggregate([
-      {
-        $match: {
-          _id: new mongoose.Types.ObjectId(requestId),
-          status: MEMBER_STATUS.PENDING,
-        },
-      },
-    ]);
+    const request = await Member.findOne({
+      _id: requestId,
+      status: MEMBER_STATUS.PENDING,
+    });
 
-    if (request.length === 0) {
+    if (!request) {
       return res.status(404).json({
         success: false,
         message: "Pending request not found",
       });
     }
 
+    const event = await Event.findById(request.eventId);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
+    }
+
+    if (event.orgId.toString() !== organizationId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to respond to this request",
+      });
+    }
+
     //step 2: update the request status
     await Member.findByIdAndUpdate(requestId, { status: status });
+
+    if (status === MEMBER_STATUS.ACCEPTED) {
+      await createNotification(
+        request.userId,
+        NOTIFICATION_TYPES.EVENT_UPDATE,
+        "Request Accepted",
+        `Your request to join ${event.title} has been accepted`,
+        event._id,
+      );
+    }
+
     return res.status(200).json({
       success: true,
       message: `${status === MEMBER_STATUS.ACCEPTED ? "Accepted" : "Rejected"} request responded successfully`,

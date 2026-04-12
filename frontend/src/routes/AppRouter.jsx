@@ -37,7 +37,9 @@ import OrganizationDashboard from "@/pages/organization/OrganizationDashboard";
 import OrgProfile from "@/pages/organization/OrgProfile";
 import ExploreEvents from "@/pages/organization/ExploreEvents";
 import OrgRequests from "@/pages/organization/OrgRequests";
+import OrganizationNotificationsPage from "@/pages/organization/OrganizationNotificationsPage";
 import CivilianEvents from "@/pages/civilian/CivilianEvents";
+import CivilianNotificationsPage from "@/pages/civilian/CivilianNotificationsPage";
 
 const router = createBrowserRouter([
   {
@@ -98,6 +100,10 @@ const router = createBrowserRouter([
             path: "requests",
             element: <OrgRequests />,
           },
+          {
+            path: "notifications",
+            element: <OrganizationNotificationsPage />,
+          },
         ],
       },
     ],
@@ -133,6 +139,10 @@ const router = createBrowserRouter([
           {
             path: "recycling-centers",
             element: <RecyclingCentersPage />,
+          },
+          {
+            path: "notifications",
+            element: <CivilianNotificationsPage />,
           },
           {
             path: "about",

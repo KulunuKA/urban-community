@@ -28,5 +28,7 @@ export const ROUTES = {
   ORGANIZATION_LAYOUT: '/organization',
   ORGANIZATION_DASHBOARD: '/organization/dashboard',
   ORGANIZATION_EVENTS: '/organization/events',
+  ORGANIZATION_NOTIFICATIONS: '/organization/notifications',
   ORGANIZATION_EXPLORE_EVENTS: '/organization/explore-events',
+  DASHBOARD_NOTIFICATIONS: '/dashboard/notifications'
 }

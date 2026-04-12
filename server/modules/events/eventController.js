@@ -1,5 +1,7 @@
+const mongoose = require("mongoose");
 const Event = require("./eventModel");
 const Member = require("../member/memberModel");
+const { MEMBER_STATUS } = require("../../config/constant");
 
 // Create event
 const createEvent = async (req, res, next) => {
@@ -27,17 +29,25 @@ const updateEvent = async (req, res, next) => {
     const { id } = req.params;
     const updateData = req.validatedBody;
 
-    const updatedEvent = await Event.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updatedEvent) {
+    const existingEvent = await Event.findById(id);
+    if (!existingEvent) {
       return res.status(404).json({
         success: false,
         message: "Event not found",
       });
     }
+
+    if (existingEvent.orgId.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to edit this event",
+      });
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     return res.status(200).json({
       success: true,
@@ -53,6 +63,23 @@ const updateEvent = async (req, res, next) => {
 const deleteEvent = async (req, res, next) => {
   try {
     const { id } = req.params;
+
+    const existingEvent = await Event.findById(id);
+
+    if (!existingEvent) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
+    }
+
+    if (existingEvent.orgId.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this event",
+      });
+    }
+
     const deletedEvent = await Event.findByIdAndDelete(id);
 
     if (!deletedEvent) {
@@ -76,37 +103,51 @@ const getAllEvents = async (req, res, next) => {
   try {
     const userId = req?.user?.id;
 
-    const events = await Event.find().sort({ date: -1 });
+    const events = await Event.aggregate([
+      { $sort: { date: -1 } },
+      {
+        $lookup: {
+          from: "members",
+          let: { eventId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$eventId", "$$eventId"] },
+                status: MEMBER_STATUS.ACCEPTED,
+              },
+            },
+          ],
+          as: "acceptedMembers",
+        },
+      },
+      {
+        $addFields: { memberCount: { $size: "$acceptedMembers" } },
+      },
+      {
+        $project: { acceptedMembers: 0 },
+      },
+    ]);
 
-    // Attach current user's membership status per event (if user is authenticated).
+    // Attach membership status per event for the logged-in user
     let membershipByEventId = {};
-
     if (userId && events.length > 0) {
-      const eventIds = events.map((event) => event._id);
+      const eventIds = events.map((e) => e._id);
       const memberships = await Member.find({
         userId,
         eventId: { $in: eventIds },
-      })
-        .sort({ createdAt: -1 })
-        .lean();
+      }).lean();
 
-      membershipByEventId = memberships.reduce((acc, membership) => {
-        const eventKey = membership.eventId.toString();
-        if (!acc[eventKey]) {
-          acc[eventKey] = membership.status;
-        }
+      membershipByEventId = memberships.reduce((acc, m) => {
+        const key = m.eventId.toString();
+        if (!acc[key]) acc[key] = m.status;
         return acc;
       }, {});
     }
 
-    const eventsWithMembership = events.map((event) => {
-      const membershipStatus = membershipByEventId[event._id.toString()] || null;
-
-      return {
-        ...event.toObject(),
-        membershipStatus,
-      };
-    });
+    const eventsWithMembership = events.map((event) => ({
+      ...event,
+      membershipStatus: membershipByEventId[event._id.toString()] || null,
+    }));
 
     return res.status(200).json({
       success: true,
@@ -142,26 +183,37 @@ const getEventById = async (req, res, next) => {
 // Get events specifically for the logged-in organization
 const getMyEvents = async (req, res, next) => {
   try {
-    // req.user.id comes from your 'auth' middleware
-    const events = await Event.find({ orgId: req.user.id }).sort({ date: 1 });
+    const orgId = req.user.id;
 
-    return res.status(200).json({
-      success: true,
-      count: events.length,
-      data: events,
-    });
-  } catch (err) {
-    next(err);
+    const events = await Event.aggregate([
+      { $match: { orgId: new mongoose.Types.ObjectId(orgId) } },
+      {
+        $lookup: {
+          from: "members",
+          let: { eventId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$eventId", "$$eventId"] },
+                status: MEMBER_STATUS.ACCEPTED,
+              },
+            },
+          ],
+          as: "acceptedMembers",
+        },
+      },
+      {
+        $addFields: { memberCount: { $size: "$acceptedMembers" } },
+      },
+      {
+        $project: { acceptedMembers: 0 },
+      },
+    ]);
+
+    return res.status(200).json({ success: true, data: events });
+  } catch (error) {
+    next(error);
   }
 };
 
-// exports
-module.exports = { 
-  createEvent, 
-  updateEvent, 
-  deleteEvent,
-  getAllEvents,
-  getEventById,
-  getMyEvents 
-};
-
+module.exports = { createEvent, updateEvent, deleteEvent, getAllEvents, getEventById, getMyEvents };
