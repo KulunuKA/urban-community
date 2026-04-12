@@ -308,53 +308,53 @@ export default function CivilianDashboardHomePage() {
               const membershipTag = getMembershipTag(event.membershipStatus);
               const isRequesting = requestingId === event._id;
 
-              return (
+                return (
                 <article
                   key={event._id}
                   className="rounded-2xl border border-slate-200 bg-white p-5"
                 >
                   <h3 className="text-lg font-semibold text-slate-900">{event.title}</h3>
                   <p className="mt-2 line-clamp-2 text-sm text-slate-600">
-                    {event.description}
+                  {event.description}
                   </p>
 
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <span
-                      className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${membershipTag.className}`}
-                    >
-                      {membershipTag.label}
-                    </span>
-                    <span
-                      className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${scheduleTag.className}`}
-                    >
-                      {scheduleTag.label}
-                    </span>
-                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600">
-                      {event.organization || "Community Team"}
-                    </span>
+                  <span
+                    className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${membershipTag.className}`}
+                  >
+                    {membershipTag.label}
+                  </span>
+                  <span
+                    className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${scheduleTag.className}`}
+                  >
+                    {scheduleTag.label}
+                  </span>
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                    {event.organization || "Community Team"}
+                  </span>
                   </div>
 
                   <div className="mt-4 space-y-2 text-sm text-slate-700">
-                    <p>
-                      <span className="font-medium text-slate-500">Date:</span>{" "}
-                      {formatDate(event.date)}
-                    </p>
-                    <p className="inline-flex items-center gap-1.5">
-                      <MapPin className="h-4 w-4 text-slate-500" />
-                      {event.location || "Location will be updated"}
-                    </p>
+                  <p>
+                    <span className="font-medium text-slate-500">Date:</span>{" "}
+                    {formatDate(event.date)}
+                  </p>
+                  <p className="inline-flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-slate-500" />
+                    {event.location || "Location will be updated"}
+                  </p>
                   </div>
 
                   <button
-                    type="button"
-                    onClick={() => onSendRequest(event._id)}
-                    disabled={isRequesting}
-                    className="mt-4 inline-flex items-center justify-center rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
+                  type="button"
+                  onClick={() => onSendRequest(event._id)}
+                  disabled={isRequesting}
+                  className="mt-4 inline-flex items-center justify-center rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
                   >
-                    {isRequesting ? "Sending..." : "Accept Event"}
+                  {isRequesting ? "Sending..." : "Request to Join"}
                   </button>
                 </article>
-              );
+                );
             })}
           </div>
         )}

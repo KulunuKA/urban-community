@@ -8,8 +8,6 @@ build/
 *.local
 
 # Environment
-.env
-.env.*
 !.env.example
 
 # Logs
@@ -30,7 +28,6 @@ coverage/
 Thumbs.db
 
 # Editors
-.vscode/*
 !.vscode/extensions.json
 .idea/
 *.suo
@@ -42,3 +39,4 @@ Thumbs.db
 # Temp
 tmp/
 temp/
+config.bat
