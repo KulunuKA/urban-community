@@ -96,19 +96,35 @@ VITE_API_URL=https://your-backend-name.onrender.com
 
 ### Frontend (Live Application)
 
-![Frontend](./screenshots/frontend.png)
+![Frontend](./deployment-screenshots/frontend-live.png)
 
 ### Backend API Response
 
-![Backend](./screenshots/backend.png)
+![Backend](./deployment-screenshots/postman_api_testing.png)
 
-### Database (MongoDB Atlas)
+### Render Dashboard (Deployment Success)
 
-![Database](./screenshots/database.png)
+![Deployment](./deployment-screenshots/render-deployment-success.png)
 
-### Deployment Dashboard (Render)
+### Render Dashboard (Deployment logs)
 
-![Deployment](./screenshots/deployment.png)
+![Deployment](./deployment-screenshots/render-logs.png)
+
+### Render Dashboard (Render ENV)
+
+![Deployment](./deployment-screenshots/render-env.png)
+
+### Vercel Dashboard (Deployment Success)
+
+![Deployment](./deployment-screenshots/vercel-deployment-success.jpeg)
+
+### Vercel Dashboard (Vercel ENV)
+
+![Deployment](./deployment-screenshots/vercel-env.jpeg)
+
+### Vercel Dashboard (Vercel Project)
+
+![Deployment](./deployment-screenshots/vercel-project.jpeg)
 
 ---
 
