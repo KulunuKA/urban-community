@@ -27,10 +27,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", process.env.CLIENT_URL],
+    origin: ["http://localhost:5173", "https://urban-community.vercel.app"],
     credentials: true,
   }));
-  
+
 app.use(express.json());
 
 app.use("/api/civilian", citizenRoute);
