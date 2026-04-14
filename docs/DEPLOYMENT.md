@@ -2,90 +2,135 @@
 
 This project is deployed using:
 
-- Frontend: Vercel  
-- Backend: Railway  
-- Database: MongoDB Atlas  
+* **Frontend:** Vercel
+* **Backend:** Render
+* **Database:** MongoDB Atlas
 
 ---
 
-## 🔧 Backend Deployment (Railway)
+## 🔧 Backend Deployment (Render)
 
-**Platform:** Railway  
+**Platform:** Render
 
 ### Steps:
-1. Push the project to GitHub  
-2. Create a new project in Railway  
-3. Connect your GitHub repository  
-4. Set the root directory to:
-   ```
-   server
-   ```
-5. Add environment variables  
-6. Deploy the backend  
+
+1. Push the project to GitHub
+2. Go to Render Dashboard
+3. Click **New → Web Service**
+4. Connect your GitHub repository
+5. Select the repository
+6. Configure the service:
+
+   * **Root Directory:** `backend`
+   * **Build Command:** `npm install`
+   * **Start Command:** `npm start`
+7. Add required environment variables
+8. Click **Create Web Service**
+9. Wait for deployment to complete
+
+Once deployed, Render will provide a public URL:
+
+```
+https://urban-community-backend.onrender.com
+```
 
 ---
 
 ## 🎨 Frontend Deployment (Vercel)
 
-**Platform:** Vercel  
+**Platform:** Vercel
 
 ### Steps:
-1. Import your GitHub repository into Vercel  
+
+1. Import your GitHub repository into Vercel
 2. Set the root directory to:
+
    ```
    frontend
    ```
-3. Add environment variables  
-4. Deploy the frontend  
+3. Add environment variables
+4. Deploy the frontend
 
 ---
 
 ## 🔐 Environment Variables
 
-### Backend (server)
+### Backend (Render)
 
-| Variable | Required | Purpose |
-|----------|------------|---------|
-| `JWT_SECRET` | Yes | Secret for signing JWTs. |
-| `MONGO_URI` | Yes | MongoDB connection string (e.g. Atlas or Railway Mongo plugin). |
-| `PORT` | Optional | HTTP port; Railway often sets `PORT` automatically—use it if your app reads `process.env.PORT`. |
-| `NODE_ENV` | Recommended | Set to `production` for production. |
-| `CLOUDINARY_CLOUD_NAME` | Yes (if uploads used) | Cloudinary cloud name. |
-| `CLOUDINARY_API_KEY` | Yes (if uploads used) | Cloudinary API key. |
-| `CLOUDINARY_API_SECRET` | Yes (if uploads used) | Cloudinary API secret. |
+| Variable      | Required    | Purpose                         |
+| ------------- | ----------- | ------------------------------- |
+| `JWT_SECRET`  | Yes         | Secret for signing JWTs         |
+| `MONGODB_URI` | Yes         | MongoDB Atlas connection string |
+| `CLIENT_URL`  | Yes         | Frontend URL (Vercel domain)    |
+| `NODE_ENV`    | Recommended | Set to `production`             |
+
+> ⚠️ Note: `PORT` is automatically handled by Render
 
 ---
 
-### Frontend (frontend)
+### Frontend (Vercel)
 
-| Variable | Required | Purpose |
-|----------|------------|---------|
-| `VITE_API_URL` | Often yes in production | Public base URL of the **Railway** API
+| Variable       | Required | Purpose                              |
+| -------------- | -------- | ------------------------------------ |
+| `VITE_API_URL` | Yes      | Base URL of the deployed backend API |
 
-⚠️ Do not include real values in this file.
+Example:
+
+```
+VITE_API_URL=https://your-backend-name.onrender.com
+```
 
 ---
 
 ## 🔗 Live URLs
 
-- Frontend Application:  
-  https://your-frontend.vercel.app  
+* **Frontend Application:**
+  https://urban-community.vercel.app/
 
-- Backend API:  
-  https://your-backend.railway.app  
+* **Backend API:**
+  https://urban-community-backend.onrender.com
 
 ---
 
 ## 📸 Deployment Screenshots
 
 ### Frontend (Live Application)
-![Frontend](./screenshots/frontend.png)
+
+![Frontend](./deployment-screenshots/frontend-live.png)
 
 ### Backend API Response
-![Backend](./screenshots/backend.png)
 
-### Database (MongoDB Atlas)
-![Database](./screenshots/database.png)
+![Backend](./deployment-screenshots/postman_api_testing.png)
 
-### Deployment Dashboard
-![Deployment](./screenshots/deployment.png)
+### Render Dashboard (Deployment Success)
+
+![Deployment](./deployment-screenshots/render-deployment-success.png)
+
+### Render Dashboard (Deployment logs)
+
+![Deployment](./deployment-screenshots/render-logs.png)
+
+### Render Dashboard (Render ENV)
+
+![Deployment](./deployment-screenshots/render-env.png)
+
+### Vercel Dashboard (Deployment Success)
+
+![Deployment](./deployment-screenshots/vercel-deployment-success.jpeg)
+
+### Vercel Dashboard (Vercel ENV)
+
+![Deployment](./deployment-screenshots/vercel-env.jpeg)
+
+### Vercel Dashboard (Vercel Project)
+
+![Deployment](./deployment-screenshots/vercel-project.jpeg)
+
+---
+
+## 📝 Notes
+
+* The backend is deployed as a **Node.js Web Service on Render**
+* The frontend communicates with the backend using the deployed API URL
+* Free-tier Render services may take a few seconds to respond after inactivity
+* Environment variables are securely managed via Render and Vercel dashboards
