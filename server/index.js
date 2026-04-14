@@ -27,7 +27,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://urban-community.vercel.app"],
+    origin: ["http://localhost:5173", "https://urban-community.vercel.app", process.env.CLIENT_URL],
     credentials: true,
   }));
 
