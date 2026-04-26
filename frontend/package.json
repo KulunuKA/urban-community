@@ -7,7 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:issues": "vitest run src/services/__tests__/issue.service.test.js src/pages/civilian/__tests__/IssueReportingPage.test.jsx",
+    "test:user-org": "vitest run src/services/__tests__/civilian.service.test.js src/services/__tests__/organization.service.test.js src/services/__tests__/auth.service.test.js src/pages/__tests__/RegisterCivilian.test.jsx src/pages/__tests__/RegisterOrganization.test.jsx src/pages/__tests__/LoginPage.test.jsx",
+    "test:events": "vitest run src/services/__tests__/civilian.events.service.test.js src/pages/civilian/__tests__/CivilianEvents.test.jsx",
+    "test:recycling": "vitest run src/services/__tests__/recycling.service.test.js src/pages/civilian/__tests__/RecyclingCentersPage.test.jsx src/pages/civilian/__tests__/GarbagePickupRequestPage.test.jsx"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
@@ -17,10 +23,14 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.14.0",
+    "recharts": "^3.8.1",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
@@ -28,6 +38,8 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
-    "vite": "^8.0.4"
+    "jsdom": "^26.0.0",
+    "vite": "^8.0.4",
+    "vitest": "^3.0.5"
   }
 }

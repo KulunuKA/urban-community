@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Button, Input } from "@/components/ui";
-import { Lock, Mail, User } from "lucide-react";
+import { Input } from "@/components/ui";
+import { Lock, Mail, Recycle, User } from "lucide-react";
 import { useCivilian } from "@/contexts/CivilianProvider";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
@@ -8,11 +8,7 @@ import { ROUTES } from "@/constants/routes";
 export default function RegisterCivilian() {
   const { register } = useCivilian();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -25,125 +21,209 @@ export default function RegisterCivilian() {
     let newErrors = {};
     if (!formData.name) newErrors.name = "Name is required";
     if (!formData.email) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Email is invalid";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Invalid format";
     if (!formData.password) newErrors.password = "Password is required";
-    else if (formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
+    else if (formData.password.length < 6) newErrors.password = "Min 6 characters required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
     try {
       setIsSubmitting(true);
       if (!validate()) return;
-      // Simulate API call
       await register(formData);
       navigate(ROUTES.DASHBOARD);
     } catch (error) {
-      setErrors({ main: error });
+      setErrors({ main: "Registration failed. Please check your network." });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const styles = {
+    container: {
+      minHeight: "100vh",
+      background: "#ffffff", 
+      display: "grid",
+      gridTemplateColumns: "1fr",
+      gridTemplateRows: "1fr",
+      fontFamily: "'DM Sans', sans-serif",
+      position: "relative",
+    },
+    imageSide: {
+  background: "linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.pexels.com/photos/2850347/pexels-photo-2850347.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  display: "none", 
+  position: "relative",
+},
+    imageOverlay: {
+      position: "absolute",
+      inset: 0,
+      background: "linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,1))",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      padding: "4rem",
+    },
+    formSide: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "2rem",
+      background: "#ffffff",
+    },
+    card: {
+      width: "100%",
+      maxWidth: "420px",
+      padding: "1rem",
+    },
+    label: {
+      fontSize: "13px",
+      fontWeight: 600,
+      color: "#374151",
+      marginBottom: "4px"
+    },
+    submitButton: {
+      marginTop: "1.5rem",
+      width: "100%",
+      padding: "14px",
+      background: isSubmitting ? "#a7f3d0" : "#10b981",
+      color: "#fff",
+      border: "none",
+      borderRadius: "12px",
+      fontSize: "15px",
+      fontWeight: 600,
+      cursor: isSubmitting ? "not-allowed" : "pointer",
+      transition: "all 0.2s ease",
+      boxShadow: "0 4px 12px rgba(16, 185, 129, 0.2)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "10px",
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-blue-50 flex items-center justify-center px-4 py-12">
-      {/* Decorative blobs */}
-      <div className="pointer-events-none fixed top-0 left-0 w-full h-full overflow-hidden -z-10">
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-100 rounded-full opacity-50 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-sky-100 rounded-full opacity-50 blur-3xl" />
+    <div style={styles.container} className="responsive-container">
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+      
+      {/* 🖼️ Left Side: Visual Content */}
+      <div style={styles.imageSide} className="responsive-image">
+        <div style={styles.imageOverlay}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", color: "#10b981", marginBottom: "1.5rem"}}>
+            <Recycle size={36} strokeWidth={2.5}/>
+            <span style={{ fontSize: "32px", fontWeight: 800, color: "#ffffff", letterSpacing: "-1px", }}>Urban Community</span>
+          </div>
+          <h2 style={{ fontSize: "42px", fontWeight: 700, color: "#eeeef0", letterSpacing: "-1.5px", lineHeight: 1.1, marginBottom: "1.5rem" }}>
+            Be the change<br/> your city needs.
+          </h2>
+          <p style={{ 
+  color: "#ffffff", 
+  fontSize: "17px", 
+  maxWidth: "400px", 
+  lineHeight: 1.6,
+  textShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)" 
+}}>
+  Join a collective effort to build sustainable urban spaces. Report issues, find recycling hubs, and grow your impact.
+</p>
+        </div>
       </div>
 
-      <div className="w-full max-w-[50%]">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-500 shadow-lg shadow-blue-200 mb-4">
-            <User className="text-white w-7 h-7" />
+      {/* 📝 Right Side: Registration Form */}
+      <div style={styles.formSide}>
+        <div style={styles.card}>
+          <div style={{ marginBottom: "2.5rem" }}>
+            <h1 style={{ fontSize: "32px", fontWeight: 700, color: "#111827", letterSpacing: "-1px", margin: 0 }}>
+              Join Us
+            </h1>
+            <p style={{ fontSize: "16px", color: "#6b7280", marginTop: "8px" }}>
+              Create your civilian account today.
+            </p>
           </div>
-          <h1
-            className="text-3xl font-bold text-slate-800 tracking-tight"
-            style={{ fontFamily: "'Lora', Georgia, serif" }}
-          >
-            Civilian Registration
-          </h1>
-          <p className="text-slate-400 text-sm mt-1.5 font-medium">
-            Create your account to get started
-          </p>
-        </div>
 
-        {/* Card */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl shadow-slate-100 border border-slate-100 px-8 py-8">
-          <form className="flex flex-col gap-5">
-            {/* main error */}
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
             {errors.main && (
-              <div className="bg-red-100 text-red-700 px-4 py-2 rounded">
+              <div style={{ background: "#fef2f2", border: "1px solid #fee2e2", color: "#b91c1c", padding: "12px", borderRadius: "10px", fontSize: "14px", fontWeight: 500, textAlign: "center" }}>
                 {errors.main}
               </div>
             )}
 
-            
-
-            <div className="flex flex-col gap-1.5">
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <label style={styles.label}>Full Name</label>
               <Input
                 type="text"
-                id="name"
-                label={"Full Name"}
                 value={formData.name}
-                placeholder="Enter Full Name"
-                required
+                placeholder="Jane Doe"
                 icon={User}
                 onChange={handleChange("name")}
                 error={errors.name}
+                style={{ background: "#f9fafb", border: "1px solid #e5e7eb" }}
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <label style={styles.label}>Email Address</label>
               <Input
                 type="email"
-                id="email"
-                label={"Email Address"}
                 value={formData.email}
-                placeholder="Enter Email"
-                required
+                placeholder="jane@example.com"
                 icon={Mail}
                 onChange={handleChange("email")}
                 error={errors.email}
+                style={{ background: "#f9fafb", border: "1px solid #e5e7eb" }}
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <label style={styles.label}>Password</label>
               <Input
                 type="password"
-                id="password"
-                label={"Password"}
                 value={formData.password}
-                placeholder="Enter Password"
+                placeholder="••••••••"
                 icon={Lock}
-                required
                 onChange={handleChange("password")}
                 error={errors.password}
+                style={{ background: "#f9fafb", border: "1px solid #e5e7eb" }}
               />
             </div>
 
-            <Button type="submit" onClick={handleSubmit} loading={isSubmitting}>
-              Create Account
-            </Button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              style={styles.submitButton}
+              onMouseEnter={(e) => { if (!isSubmitting) e.currentTarget.style.transform = "translateY(-2px)"; }}
+              onMouseLeave={(e) => { if (!isSubmitting) e.currentTarget.style.transform = "translateY(0)"; }}
+            >
+              {isSubmitting ? (
+                <>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: "spin 0.8s linear infinite" }}><path d="M21 12a9 9 0 11-6.219-8.56" /></svg>
+                  Getting Started...
+                </>
+              ) : (
+                "Create Account"
+              )}
+            </button>
           </form>
-        </div>
 
-        {/* Footer */}
-        <p className="text-center text-slate-400 text-sm mt-6">
-          Already have an account?
-          <a
-            href="/login"
-            className="text-blue-500 font-semibold hover:underline"
-          >
-            Sign in
-          </a>
-        </p>
+          <p style={{ textAlign: "center", fontSize: "14px", color: "#6b7280", marginTop: "2.5rem" }}>
+            Already have an account?{" "}
+            <a href="/login" style={{ color: "#10b981", fontWeight: 600, textDecoration: "none" }}>
+              Sign in
+            </a>
+          </p>
+        </div>
       </div>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (min-width: 992px) {
+          .responsive-container { grid-template-columns: 1.2fr 1fr !important; }
+          .responsive-image { display: block !important; }
+        }
+      `}</style>
     </div>
   );
 }

@@ -13,7 +13,7 @@ const createEventSchema = Joi.object({
 const updateEventSchema = Joi.object({
   title: Joi.string().min(5).max(100).trim(),
   description: Joi.string().min(10),
-  date: Joi.date().greater('now'),
+  date: Joi.date(),
   location: Joi.string(),
   organization: Joi.string(),
 }).min(1);

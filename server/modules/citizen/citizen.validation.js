@@ -15,4 +15,23 @@ const registerSchema = Joi.object({
   }),
 });
 
-module.exports = { registerSchema };
+const updateProfileSchema = Joi.object({
+  name: Joi.string().min(2).max(100).trim().messages({
+    "string.min": "Name must be at least 2 characters",
+  }),
+  phone: Joi.string().trim().allow("", null),
+  profileImage: Joi.string().uri().allow("", null).messages({
+    "string.uri": "Profile image must be a valid URL",
+  }),
+  bio: Joi.string().max(500).allow("", null),
+  location: Joi.object({
+    city: Joi.string().trim().allow("", null),
+    district: Joi.string().trim().allow("", null),
+    province: Joi.string().trim().allow("", null),
+  })
+    .default({})
+    .optional(),
+  preferredLanguage: Joi.string().trim().allow("", null),
+});
+
+module.exports = { registerSchema, updateProfileSchema };

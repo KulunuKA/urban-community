@@ -2,28 +2,41 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const citizenSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
+ // Auth
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+
+  // Profile
+  phone: String,
+  profileImage: String,
+  bio: String,
+
+  // Location
+  location: {
+    city: String,
+    district: String,
+    province: String,
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
+
+  // Engagement
+  points: { type: Number, default: 0 },
+  badges: [String],
+
+  // System
   role: {
     type: String,
     enum: ["citizen"],
     default: "citizen",
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  isVerified: { type: Boolean, default: false },
+  isActive: { type: Boolean, default: true },
+
+  // Preferences
+  preferredLanguage: { type: String, default: "en" },
+
+  createdAt: { type: Date, default: Date.now },
+  lastLogin: Date,
 });
 
 citizenSchema.index({ createdAt: -1 });

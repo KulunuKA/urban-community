@@ -34,6 +34,89 @@ const register = async (req, res, next) => {
   }
 };
 
+const getProfile = async (req, res, next) => {
+  try {
+    const userId = req?.user?.id;
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized" });
+    }
+
+    const organization = await Organization.findById(userId);
+
+    if (!organization) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Organization not found" });
+    }
+
+    const orgResponse = organization.toObject();
+    delete orgResponse.password;
+
+    return res.status(200).json({
+      success: true,
+      data: orgResponse,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateProfile = async (req, res, next) => {
+  try {
+    const userId = req?.user?.id;
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized" });
+    }
+
+    const organization = await Organization.findById(userId);
+
+    if (!organization) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Organization not found" });
+    }
+
+    const value = req.validatedBody || {};
+
+    if (Object.prototype.hasOwnProperty.call(value, "name")) {
+      organization.name = value.name;
+    }
+    if (Object.prototype.hasOwnProperty.call(value, "description")) {
+      organization.description = value.description || "";
+    }
+    if (Object.prototype.hasOwnProperty.call(value, "address")) {
+      organization.address = value.address || "";
+    }
+    if (Object.prototype.hasOwnProperty.call(value, "phone")) {
+      organization.phone = value.phone || "";
+    }
+    if (Object.prototype.hasOwnProperty.call(value, "profileImage")) {
+      organization.profileImage = value.profileImage || "";
+    }
+
+    await organization.save();
+
+    const orgResponse = organization.toObject();
+    delete orgResponse.password;
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: orgResponse,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   register,
+  getProfile,
+  updateProfile,
 };

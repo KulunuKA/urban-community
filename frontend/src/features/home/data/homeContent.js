@@ -18,7 +18,7 @@ export const REGISTER_MODAL_CARDS = [
     description:
       'Host sustainability programs, publish events, and collaborate with citizens to drive local impact.',
     image:
-      'https://unsplash.com/photos/skyscrapers-against-a-dusky-purple-sunset-sky-QHxtB10U0y8',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=640&q=80',
     imageAlt: 'Modern city buildings at dusk',
     to: ROUTES.REGISTER_ORGANIZATION,
     accent: 'sky',

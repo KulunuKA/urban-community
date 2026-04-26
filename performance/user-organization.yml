@@ -1,0 +1,35 @@
+# Load: civilian registration + unified login (user management API).
+# Requires API running with MongoDB. Each virtual user gets a unique email via UUID.
+#
+#   cd performance && npm install && npm run user-org
+#
+# Optional: npx artillery run user-organization.yml --target http://127.0.0.1:3000
+
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 20
+      arrivalRate: 2
+      name: Register + login steady
+  variables:
+    uuid: ""
+  processor: "./user-org-processor.js"
+
+scenarios:
+  - name: Register civilian then login
+    flow:
+      - function: "assignUuid"
+      - post:
+          url: "/api/civilian/register"
+          json:
+            name: "Load Test User"
+            email: "load-{{ uuid }}@example.com"
+            password: "LoadTestPass1"
+          capture:
+            - json: "$.data.token"
+              as: "token"
+      - post:
+          url: "/api/users/login"
+          json:
+            email: "load-{{ uuid }}@example.com"
+            password: "LoadTestPass1"

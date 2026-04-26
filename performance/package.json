@@ -1,0 +1,14 @@
+{
+  "name": "urban-community-performance",
+  "private": true,
+  "description": "Load tests for the Urban Community API (issues, events, recycling, user/org).",
+  "scripts": {
+    "issues": "artillery run issue-reporting.yml",
+    "user-org": "artillery run user-organization.yml",
+    "events": "artillery run events.yml",
+    "recycling": "artillery run recycling.yml"
+  },
+  "devDependencies": {
+    "artillery": "^2.0.27"
+  }
+}

@@ -21,6 +21,11 @@ const login = async (req, res, next) => {
           .status(401)
           .json({ success: false, message: "Invalid password" });
       }
+
+      //set last login time
+      citizen.lastLogin = new Date();
+      await citizen.save();
+
       user = citizen;
       user.role = "citizen";
     }
@@ -39,6 +44,9 @@ const login = async (req, res, next) => {
       }
       user = organization;
       user.role = "organization";
+      
+      user.lastLogin = new Date();
+      await user.save();
     }
 
     if (!user) {

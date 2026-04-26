@@ -8,7 +8,7 @@ if (!process.env.JWT_SECRET) {
   process.exit(1);
 }
 
-require("./utils/database");
+require("./utils/Database");
 
 const express = require("express");
 const recyclingCenterRoutes = require("./modules/recycling/recling.Routes");
@@ -19,7 +19,8 @@ const organizationRoute = require("./modules/organization/organization.route");
 const errorHandler = require("./middlewares/errorHandler");
 const userRoute = require("./modules/user/user.route");
 const memberRoute = require("./modules/member/member.route");
-const adminRoute = require("./modules/admin/admin.route");
+const adminRoute = require("./modules/Admin/admin.route");
+const notificationRoute = require("./modules/Notifications/notifcation.route");
 const app = express();
 const cors = require("cors");
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,7 @@ app.use("/api/organization", organizationRoute);
 app.use("/api/member", memberRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/users", userRoute);
+app.use("/api/notifications", notificationRoute);
 app.use("/api/recycling", recyclingCenterRoutes);
 app.use("/api/events", eventRoute);
 app.use("/api/issues", issueRoute);

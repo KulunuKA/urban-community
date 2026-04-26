@@ -1,0 +1,17 @@
+# Load: public recycling center search (GET /api/recycling/centers).
+# API must be running.
+#
+#   cd performance && npm run recycling
+
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 20
+      arrivalRate: 3
+      name: Recycling centers steady load
+
+scenarios:
+  - name: List centers with optional filters
+    flow:
+      - get:
+          url: "/api/recycling/centers?city=Colombo&wasteType=plastic"

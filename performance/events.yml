@@ -1,0 +1,23 @@
+# Load: authenticated list of community events (GET /api/events).
+# API must be running. Optional civilian JWT for realistic 200 responses.
+#
+#   cd performance && npm run events
+#
+#   $env:PERF_EVENTS_JWT = "<civilian JWT only>"
+
+config:
+  target: "http://localhost:3000"
+  processor: "./events-processor.js"
+  phases:
+    - duration: 20
+      arrivalRate: 3
+      name: Events list steady load
+
+scenarios:
+  - name: List events (auth optional)
+    flow:
+      - function: "setAuthVars"
+      - get:
+          url: "/api/events"
+          headers:
+            Authorization: "Bearer {{ token }}"
