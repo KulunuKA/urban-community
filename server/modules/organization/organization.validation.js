@@ -27,4 +27,14 @@ const registerSchema = Joi.object({
   }),
 });
 
-module.exports = { registerSchema };
+const updateProfileSchema = Joi.object({
+  name: Joi.string().min(2).max(200).trim(),
+  description: Joi.string().min(2).trim().allow(""),
+  address: Joi.string().min(2).trim().allow(""),
+  phone: Joi.string().min(6).trim().allow(""),
+  profileImage: Joi.string().uri().allow("", null).messages({
+    "string.uri": "Profile image must be a valid URL",
+  }),
+}).min(1);
+
+module.exports = { registerSchema, updateProfileSchema };

@@ -1,5 +1,6 @@
+import { ROUTES } from "@/constants/routes";
 import { authService } from "@/services/auth.service";
-import { getSessionValue, setSession } from "@/utils/session";
+import { clearSession, getSessionValue, removeSession, setSession } from "@/utils/session";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
@@ -10,7 +11,6 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const accessToken = getSessionValue("accessToken");
-    console.log(accessToken)
     if (accessToken) setIsAuthenticated(true);
     setIsAuthReady(true);
   }, []);
@@ -27,18 +27,29 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const body = await authService.login(email, password);
-    if (body.statusCode === 200 && body.data?.token) {
-      setIsAuthenticated(true);
-      setSession("accessToken", body.data.token);
+    try {
+      const body = await authService.login(email, password);
+      const data = body.data.data;
+      if (body.status === 200) {
+        setIsAuthenticated(true);
+        setSession("accessToken", data.token);
+        setSession("user", JSON.stringify(data.user));
+        if (data.user.role === "citizen") {
+          window.location.replace(ROUTES.DASHBOARD);
+        } else if (data.user.role === "organization") {
+          window.location.replace(ROUTES.ORGANIZATION_DASHBOARD);
+        }
+      }
+      return data;
+    } catch (error) {
+      throw error?.response?.data?.message || "Login failed. Please try again.";
     }
-    return body;
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    sessionStorage.removeItem("accessToken");
-    sessionStorage.removeItem("user");
+    clearSession();
+    window.location.replace(ROUTES.LOGIN);
   };
 
   return (

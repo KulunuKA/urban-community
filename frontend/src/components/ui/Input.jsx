@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function Input({
@@ -11,6 +11,8 @@ export default function Input({
   icon: Icon,
   error,
   required = false,
+  disabled = false,
+  className = "",
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -44,11 +46,12 @@ export default function Input({
           type={inputType}
           placeholder={placeholder}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => onChange?.(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           required={required}
-          className={`w-full p-3 text-sm font-normal text-gray-900 bg-white border border-gray-300 rounded-lg ${error ? "border-red-500" : ""} ${Icon ? "pl-10" : "pl-3"} ${isPassword ? "pr-10" : "pr-3"}`}
+          disabled={disabled}
+          className={`w-full p-3 text-sm font-normal text-gray-900 bg-white border border-gray-300 rounded-lg ${error ? "border-red-500" : ""} ${Icon ? "pl-10" : "pl-3"} ${isPassword ? "pr-10" : "pr-3"} ${disabled ? "cursor-not-allowed bg-slate-100 text-slate-500" : ""} ${className}`}
         />
         {isPassword && (
           <button

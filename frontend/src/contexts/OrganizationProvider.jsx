@@ -1,10 +1,14 @@
+import React, { createContext, useContext, useState } from "react";
+import { ROUTES } from "@/constants/routes";
 import { organizationService } from "@/services/organization.service";
 import { setSession } from "@/utils/session";
-import { createContext, useContext } from "react";
+import { Navigate } from "react-router-dom";
 
 const OrganizationContext = createContext();
 
 export function OrganizationProvider({ children }) {
+  const [organization, setOrganization] = useState(null);
+
   const register = async (formData) => {
     try {
       const res = await organizationService.register(formData);
@@ -13,6 +17,7 @@ export function OrganizationProvider({ children }) {
       if (res.status === 201) {
         setSession("accessToken", data.token);
         setSession("user", JSON.stringify(data.user));
+        Navigate(ROUTES.ORGANIZATION_DASHBOARD);
       }
       return res.data;
     } catch (error) {
@@ -21,8 +26,42 @@ export function OrganizationProvider({ children }) {
       );
     }
   };
+
+  const getProfile = async () => {
+    try {
+      const res = await organizationService.profile();
+      if (res.status === 200) {
+        setOrganization(res.data.data);
+      }
+    } catch (error) {
+      throw (
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch organization profile"
+      );
+    }
+  };
+
+  const updateProfile = async (formData) => {
+    try {
+      const res = await organizationService.updateProfile(formData);
+      if (res.status === 200) {
+        setOrganization(res.data.data);
+      }
+      return res.data;
+    } catch (error) {
+      throw (
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to update organization profile"
+      );
+    }
+  };
+
   return (
-    <OrganizationContext.Provider value={{ register }}>
+    <OrganizationContext.Provider
+      value={{ register, getProfile, updateProfile, organization }}
+    >
       {children}
     </OrganizationContext.Provider>
   );

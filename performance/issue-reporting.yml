@@ -1,0 +1,30 @@
+# Load test: Issue Reporting "my issues" list (GET /api/issues/me).
+# Start the API with a real MongoDB and JWT_SECRET, then obtain a civilian JWT (login).
+#
+#   set PERF_ISSUES_JWT=<paste JWT only, no "Bearer " prefix>
+#   npm run issues
+#
+# Override base URL: npx artillery run issue-reporting.yml --target http://127.0.0.1:3000
+
+config:
+  target: "http://localhost:3000"
+  processor: "./processor.js"
+  phases:
+    - duration: 20
+      arrivalRate: 3
+      name: Warm steady load
+    - duration: 30
+      arrivalRate: 10
+      name: Higher concurrency
+  defaults:
+    headers:
+      Accept: "application/json"
+
+scenarios:
+  - name: List my issues (authenticated when PERF_ISSUES_JWT is set)
+    flow:
+      - function: "setAuthVars"
+      - get:
+          url: "/api/issues/me?page=1"
+          headers:
+            Authorization: "Bearer {{ token }}"

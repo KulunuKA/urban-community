@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Navbar } from '@/features/home/components/Navbar'
 import { HeroSection } from '@/features/home/components/HeroSection'
 import { FeaturesSection } from '@/features/home/components/FeaturesSection'
@@ -10,8 +11,16 @@ import { RegisterModal } from '@/features/home/components/RegisterModal'
 
 export function HomePage() {
   const [registerOpen, setRegisterOpen] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
   const openRegister = useCallback(() => setRegisterOpen(true), [])
   const closeRegister = useCallback(() => setRegisterOpen(false), [])
+
+  useEffect(() => {
+    if (!location.state?.openRegister) return
+    setRegisterOpen(true)
+    navigate('.', { replace: true, state: {} })
+  }, [location.state, navigate])
 
   return (
     <div id="top" className="min-h-screen bg-page text-fg">
